@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import numeral from 'numeral'
 
 
 const useStyles = makeStyles(theme => ({
@@ -46,7 +47,6 @@ export default function ExchangeCard() {
   const exchangeCardData = {
     name: 'Kraken BTC/USD',
     speed: 53,
-    // todo add lib to round to 1 digit
     asks: [
       {
         value: 7107.3,
@@ -84,12 +84,12 @@ export default function ExchangeCard() {
           {exchangeCardData.name}
         </span>
         <Typography variant="subtitle1" component="p">
-          speed: {Math.round(exchangeCardData.speed)} ob/min
+          speed: {numeral(exchangeCardData.speed).format('0')} ob/min
         </Typography>
         {(exchangeCardData.asks.map(item => (
           <div className={classes.orderBookLine}>
-            <span className={classes.asks}>{item.value}</span>
-            <span>{item.otherValue}</span>
+            <span className={classes.asks}>{numeral(item.value).format('0.0')}</span>
+            <span>{numeral(item.otherValue).format('0.0')}</span>
           </div>
         )))}
         <div className={classes.mainInfo}>
@@ -98,8 +98,8 @@ export default function ExchangeCard() {
         </div>
         {(exchangeCardData.bids.map(item => (
           <div className={classes.orderBookLine}>
-            <span className={classes.bids}>{item.value}</span>
-            <span>{item.otherValue}</span>
+            <span className={classes.bids}>{numeral(item.value).format('0.0')}</span>
+            <span>{numeral(item.otherValue).format('0.0')}</span>
           </div>
         )))}
       </CardContent>
