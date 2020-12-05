@@ -2,14 +2,14 @@ import React from 'react';
 import Container from '@material-ui/core/Container';
 
 import './App.css';
-import ExchangeCard from './components/ExchangeCard';
+import Dashboard from './components/Dashboard';
 
 
 function App() {
   return (
     <div>
       <Container>
-        <ExchangeCard />
+        <Dashboard />
       </Container>
     </div>
   );

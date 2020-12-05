@@ -3,7 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import numeral from 'numeral'
+import numeral from 'numeral';
+
+import { IExchangeCardComponentData } from '../interfaces'
 
 
 const useStyles = makeStyles(theme => ({
@@ -41,62 +43,29 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ExchangeCard() {
+export default function ExchangeCard({data}: IExchangeCardComponentData) {
   const classes = useStyles();
-
-  const exchangeCardData = {
-    name: 'Kraken BTC/USD',
-    speed: 53,
-    asks: [
-      {
-        value: 7107.3,
-        otherValue: 25.0,
-      },
-      {
-        value: 7107.2,
-        otherValue: 0.9,
-      },
-      {
-        value: 7106.9,
-        otherValue: 32,
-      },
-    ],
-    bids: [
-      {
-        value: 7104.8,
-        otherValue: 22.1,
-      },
-      {
-        value: 7105.0,
-        otherValue: 4.9,
-      },
-      {
-        value: 7105.2,
-        otherValue: 2.0,
-      },
-    ],
-  };
 
   return (
     <Card className={classes.root}>
       <CardContent>
         <span className={classes.exchangeName}>
-          {exchangeCardData.name}
+          {data.name}
         </span>
         <Typography variant="subtitle1" component="p">
-          speed: {numeral(exchangeCardData.speed).format('0')} ob/min
+          speed: {numeral(data.speed).format('0')} ob/min
         </Typography>
-        {(exchangeCardData.asks.map(item => (
+        {(data.asks.map(item => (
           <div className={classes.orderBookLine}>
             <span className={classes.asks}>{numeral(item.value).format('0.0')}</span>
             <span>{numeral(item.otherValue).format('0.0')}</span>
           </div>
         )))}
         <div className={classes.mainInfo}>
-          <span className={classes.midPrice}>7015.9</span>
-          <span className={classes.spread}>0.03%</span>
+          <span className={classes.midPrice}>{numeral(data.midPrice).format('0.0')}</span>
+          <span className={classes.spread}>{numeral(data.spread).format('0.00%')}</span>
         </div>
-        {(exchangeCardData.bids.map(item => (
+        {(data.bids.map(item => (
           <div className={classes.orderBookLine}>
             <span className={classes.bids}>{numeral(item.value).format('0.0')}</span>
             <span>{numeral(item.otherValue).format('0.0')}</span>
