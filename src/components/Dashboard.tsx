@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
-import { IExchangeCardData } from '../interfaces';
+import { IExchangeData } from '../interfaces';
 import ExchangeCard from './ExchangeCard';
 import { normalizePayload, getInfoFromAsksAndBids } from '../utils';
 
@@ -22,7 +22,8 @@ const krakenConfig = {
 };
 
 export default function Dashboard() {
-  const [exchangeCardData, setExchangeCardData] = useState({
+  const [exchangeCardData, setExchangeCardData] = useState <IExchangeData>({
+    // todo remove pair from name
     name: krakenConfig.name,
     speed: 0,
     midPrice: 0,

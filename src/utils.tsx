@@ -27,11 +27,11 @@ export function getInfoFromAsksAndBids(asks: any[], bids: any[]) {
   return {
     midPrice,
     spread,
-    topAsks: topAsks[0].map((item: string[]) => ({
+    topAsks: topAsks.map((item: string[]) => ({
       price: parseFloat(item[0]),
       volume: parseFloat(item[1]),
     })),
-    topBids: topBids[0].map((item: string[]) => ({
+    topBids: topBids.map((item: string[]) => ({
       price: parseFloat(item[0]),
       volume: parseFloat(item[1]),
     })),

@@ -11,6 +11,11 @@ export interface IExchangeCardComponentData {
   data: IExchangeCardData,
 }
 
+export interface IExchangeData extends IExchangeCardData {
+  asks: any[],
+  bids: any[],
+}
+
 export interface IOrder {
   price: number,
   volume: number,
