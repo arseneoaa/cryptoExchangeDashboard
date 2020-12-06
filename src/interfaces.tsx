@@ -12,6 +12,6 @@ export interface IExchangeCardComponentData {
 }
 
 export interface IOrder {
-  value: number,
-  otherValue: number,
+  price: number,
+  volume: number,
 }
