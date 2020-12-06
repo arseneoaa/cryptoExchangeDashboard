@@ -3,8 +3,8 @@ export interface IExchangeCardData {
   speed: number,
   midPrice: number,
   spread: number,
-  asks: IOrder[],
-  bids: IOrder[],
+  topAsks: IOrder[],
+  topBids: IOrder[],
 }
 
 export interface IExchangeCardComponentData {

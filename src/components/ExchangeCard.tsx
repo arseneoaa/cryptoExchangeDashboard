@@ -55,8 +55,8 @@ export default function ExchangeCard({data}: IExchangeCardComponentData) {
         <Typography variant="subtitle1" component="p">
           speed: {numeral(data.speed).format('0')} ob/min
         </Typography>
-        {(data.asks.map(item => (
-          <div className={classes.orderBookLine}>
+        {(data.topAsks.map((item, index) => (
+          <div className={classes.orderBookLine} key={index}>
             <span className={classes.asks}>{numeral(item.value).format('0.0')}</span>
             <span>{numeral(item.otherValue).format('0.0')}</span>
           </div>
@@ -65,8 +65,8 @@ export default function ExchangeCard({data}: IExchangeCardComponentData) {
           <span className={classes.midPrice}>{numeral(data.midPrice).format('0.0')}</span>
           <span className={classes.spread}>{numeral(data.spread).format('0.00%')}</span>
         </div>
-        {(data.bids.map(item => (
-          <div className={classes.orderBookLine}>
+        {(data.topBids.map((item, index) => (
+          <div className={classes.orderBookLine} key={index}>
             <span className={classes.bids}>{numeral(item.value).format('0.0')}</span>
             <span>{numeral(item.otherValue).format('0.0')}</span>
           </div>
