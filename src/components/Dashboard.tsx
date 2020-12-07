@@ -8,13 +8,13 @@ import { useUpdatesPerMinute } from '../hooks';
 
 const krakenConfig = {
   // name displayed on the card
-  name: 'Kraken BTC/USD',
+  name: 'Kraken',
+  pair: 'XBT/USD',
   // web socket part
   wsUrl: 'ws.kraken.com',
   // message sent to subscribe to updates
   subscriptionMessage: {
     event: "subscribe",
-    pair: ["ETH/XBT"],
     subscription: {
       name: "book",
       depth: 100
@@ -25,7 +25,7 @@ const krakenConfig = {
 export default function Dashboard() {
   const [exchangeCardData, setExchangeCardData] = useState <IExchangeData>({
     // todo remove pair from name
-    name: krakenConfig.name,
+    name: `${krakenConfig.name} ${krakenConfig.pair}`,
     updatesPerMinute: 0,
     midPrice: 0,
     spread: 0,
@@ -50,8 +50,8 @@ export default function Dashboard() {
       if (Array.isArray(payload)) {
         const { ask, asks, bid, bids, pair } = normalizePayload(payload);
 
-        if (pair !== krakenConfig.subscriptionMessage.pair[0]) {
-          throw new Error(`${pair} update received. Expected: ${krakenConfig.subscriptionMessage.pair[0]}`);
+        if (pair !== krakenConfig.pair) {
+          throw new Error(`${pair} update received. Expected: ${krakenConfig.pair}`);
         }
 
         if (bids && asks) {
@@ -97,7 +97,11 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    sendJsonMessage(krakenConfig.subscriptionMessage);
+    const subscriptionMessage = {
+      ...krakenConfig.subscriptionMessage,
+      pair: [krakenConfig.pair],
+    }
+    sendJsonMessage(subscriptionMessage);
   }, []);
 
   return (
