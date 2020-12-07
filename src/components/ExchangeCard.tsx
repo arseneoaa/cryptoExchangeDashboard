@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: 14,
     color: theme.palette.text.secondary,
   },
-  speed: {
+  updatesPerMinute: {
   },
   orderBookLine: {
     display: 'flex',
@@ -53,7 +53,7 @@ export default function ExchangeCard({data}: IExchangeCardComponentData) {
           {data.name}
         </span>
         <Typography variant="subtitle1" component="p">
-          speed: {numeral(data.speed).format('0')} ob/min
+          speed: {numeral(data.updatesPerMinute).format('0')} ob/min
         </Typography>
         {(data.topAsks.map((item, index) => (
           <div className={classes.orderBookLine} key={index}>

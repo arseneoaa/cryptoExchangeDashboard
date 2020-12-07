@@ -4,6 +4,7 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { IExchangeData } from '../interfaces';
 import ExchangeCard from './ExchangeCard';
 import { normalizePayload, getInfoFromAsksAndBids } from '../utils';
+import { useUpdatesPerMinute } from '../hooks';
 
 const krakenConfig = {
   // name displayed on the card
@@ -25,7 +26,7 @@ export default function Dashboard() {
   const [exchangeCardData, setExchangeCardData] = useState <IExchangeData>({
     // todo remove pair from name
     name: krakenConfig.name,
-    speed: 0,
+    updatesPerMinute: 0,
     midPrice: 0,
     spread: 0,
     asks: [],
@@ -33,6 +34,7 @@ export default function Dashboard() {
     topAsks: [],
     topBids: [],
   });
+  const { updatesPerMinute, recordNewUpdate } = useUpdatesPerMinute();
 
   const [socketUrl, setSocketUrl] = useState(`wss://${krakenConfig.wsUrl}`);
   const {
@@ -53,16 +55,18 @@ export default function Dashboard() {
         }
 
         if (bids && asks) {
+          recordNewUpdate();
           setExchangeCardData({
             ...exchangeCardData,
             asks,
             bids,
+            updatesPerMinute,
             ...getInfoFromAsksAndBids(asks, bids),
           });
         } else {
+          recordNewUpdate();
           // These are updates, not orderbook snapshots. In a normal implementation they should update the last
           // orderbook snapshot in memory and deliver the up-to-date orderbook.
-          // sink.send({ bids: bid, asks: ask });
           let updatedAsks = exchangeCardData.asks;
           let updatedBids = exchangeCardData.bids;
           if (ask) {
@@ -75,6 +79,7 @@ export default function Dashboard() {
             ...exchangeCardData,
             asks: updatedAsks,
             bids: updatedBids,
+            updatesPerMinute,
             ...getInfoFromAsksAndBids(updatedAsks, updatedBids),
           });
         }

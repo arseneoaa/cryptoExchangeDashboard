@@ -1,6 +1,6 @@
 export interface IExchangeCardData {
   name: string,
-  speed: number,
+  updatesPerMinute: number,
   midPrice: number,
   spread: number,
   topAsks: IOrder[],
