@@ -15,3 +15,9 @@ Example projects that shows how to obtain orderbook snapshots from Kraken.
 ## How to run
 
 Just `yarn start`.
+
+## Next steps
+- check logic
+- add unit and e2e testing
+  - singleton/multiple instances where needed
+  - book snapshot and update handling
