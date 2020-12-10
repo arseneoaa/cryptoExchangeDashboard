@@ -1,3 +1,5 @@
-const { Kraken } = require('./exchanges');
+const wsServer = require('./wsServer');
+// const { Kraken } = require('./exchanges');
 
-const exchange = Kraken({ symbol: "ETH/XBT" });
+
+// const exchange = Kraken({ symbol: "ETH/XBT" });
