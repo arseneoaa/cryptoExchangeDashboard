@@ -1,5 +1,9 @@
+const isEqual = require('lodash.isequal');
+const cloneDeep = require('lodash.clonedeep');
+
 // Each how many microseconds it will calculate and display the speed
 const FREQUENCY = 10000;
+const NUMBER_OF_TOP_ORDERS = 3;
 
 const updates = [];
 const orderBook = {
@@ -14,6 +18,8 @@ const orderBookStats = {
   spread: 0,
   updatesPerMinute: 0,
 };
+// use to know when to update external systems/clients about changes in the tracked values
+let previousOderBookStats = {};
 
 const recordNewUpdate = () => updates.push(Date.now());
 
@@ -25,9 +31,32 @@ setInterval(() => {
   console.log(`[sink] Speed: ${orderBookStats.updatesPerMinute} orderbooks per minute`);
 }, FREQUENCY);
 
+const recomputeOrderBookStats = () => {
+  // asks are sorted from lowest to highest price
+  orderBookStats.topsAsks = orderBook.asks.sort((order1, order2) => (parseFloat(order1[0]) - parseFloat(order2[0]))).slice(0, NUMBER_OF_TOP_ORDERS);
+  // bids are sorted from highest to lowest price
+  orderBook.topBids = orderBook.bids.sort((order1, order2) => (parseFloat(order2[0]) - parseFloat(order1[0]))).slice(0, NUMBER_OF_TOP_ORDERS);
+
+  const topAskPrice = orderBookStats.topsAsks[0][0];
+  const topBidPrice = orderBookStats.topBids[0][0];
+
+  orderBookStats.midPrice = topBidPrice + (topAskPrice - topBidPrice) / 2;
+  orderBookStats.spread = (topAskPrice - topBidPrice) / midPrice;
+};
+
+const notifyExternalSystemsIfNeeded = () => {
+  if(isEqual(previousOderBookStats, orderBookStats)){
+    // nothing to do
+    return;
+  }
+  previousOderBookStats = cloneDeep(orderBookStats);
+  // we notify the external systems/clients of the change
+  //todo
+};
+
 const triggerOrderBookPostUpdateProcessing = () => {
-  // recomputeOrderBookStats();
-  // updateWSClientsIfNeeded();
+  recomputeOrderBookStats();
+  notifyExternalSystemsIfNeeded();
 }
 
 const computeOrderBookAfterSingleOrder = (order, ordersList) => {

@@ -8,6 +8,8 @@
     "start": "node src"
   },
   "dependencies": {
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.isequal": "^4.5.0",
     "ws": "^7.2.1"
   },
   "devDependencies": {
