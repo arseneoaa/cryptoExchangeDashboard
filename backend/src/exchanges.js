@@ -1,5 +1,6 @@
 const WebSocket = require("ws");
-const sink = require("./sink");
+const OrderBook = require("./OderBook");
+const orderbook = new OrderBook();
 
 // See https://www.kraken.com/features/websocket-api#message-book for payload example
 const normalizePayload = payload => {
@@ -59,10 +60,10 @@ function Kraken({ symbol }) {
       }
 
       if (payloadType === 'snapshot') {
-        console.log('snapshot', JSON.stringify({ bids, asks }))
-        sink.resetOrderBookFromSnapshot({ bids, asks });
+        // console.log('snapshot', JSON.stringify({ bids, asks }))
+        orderbook.resetOrderBookFromSnapshot({ bids, asks });
       } else {
-        sink.updateOrderBook({ bids, asks });
+        orderbook.updateOrderBook({ bids, asks });
       }
     } else {
       const { event } = payload;

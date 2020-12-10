@@ -18,6 +18,11 @@ Just `yarn start`.
 
 ## Next steps
 - check logic
+- add dockerfile
 - add unit and e2e testing
   - singleton/multiple instances where needed
   - book snapshot and update handling
+- add summary of how it works
+- error handling
+- restart ws connection to exchanges if it breaks
+- add some type checking as the project might grow

@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const { getOrderBookStats } = require('./sink');
+const { getOrderBookStats } = require('./OderBook');
 
 const SERVER_PORT_NUMBER = 8088;
 
