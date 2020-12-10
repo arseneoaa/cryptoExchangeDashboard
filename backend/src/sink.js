@@ -25,6 +25,25 @@ setInterval(() => {
   console.log(`[sink] Speed: ${orderBookStats.updatesPerMinute} orderbooks per minute`);
 }, FREQUENCY);
 
+const triggerOrderBookPostUpdateProcessing = () => {
+  // recomputeOrderBookStats();
+  // updateWSClientsIfNeeded();
+}
+
+const computeOrderBookAfterSingleOrder = (order, ordersList) => {
+  // As usual, it is important not to change the inputs but rather return the result
+  // todo we could add checksum validation here
+  const volume = parseFloat(order[1]);
+  if (volume === 0) {
+    // remove the corresponding bid (with the same price) from the order book
+    return ordersList.filter(item => (item[0] !== order[0]));
+  } if (order[3] === 'r') {
+    // this is a republish update, do nothing
+  }
+  else {
+    return ordersList.concat(order);
+  }
+}
 
 module.exports = {
   resetOrderBookFromSnapshot({ bids, asks }) {
@@ -33,6 +52,7 @@ module.exports = {
     orderBook.bids = bids;
     //todo remove
     console.log('updated complete order book', JSON.stringify({ asks, bids }));
+    triggerOrderBookPostUpdateProcessing();
   },
 
   updateOrderBook({ bids, asks }) {
@@ -43,29 +63,13 @@ module.exports = {
     if (bids) {
       //todo remove
       console.log('new bids received', JSON.stringify(bids));
-      bids.forEach(bid => {
-        const volume = parseFloat(bid[1]);
-        if (volume === 0) {
-          // remove the corresponding bid (with the same price) from the order book
-          orderBook.bids = orderBook.bids.filter(item => (item[0] !== bid[0]));
-        } else {
-          orderBook.bids = orderBook.bids.concat(bid);
-        }
-      });
+      bids.forEach(bid => (orderBook.bids = computeOrderBookAfterSingleOrder(bid, orderBook.bids)));
     }
     if (asks) {
       //todo remove
       console.log('new asks received', JSON.stringify(asks));
-      asks.forEach(ask => {
-        const volume = parseFloat(ask[1]);
-        if (volume === 0) {
-          // remove the corresponding ask (with the same price) from the order book
-          orderBook.asks = orderBook.asks.filter(item => (item[0] !== ask[0]));
-        }
-        else {
-          orderBook.asks = orderBook.asks.concat(ask);
-        }
-      });
+      asks.forEach(ask => (orderBook.asks = computeOrderBookAfterSingleOrder(ask, orderBook.asks)));
     }
+    triggerOrderBookPostUpdateProcessing();
   }
 };
