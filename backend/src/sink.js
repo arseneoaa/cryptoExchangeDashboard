@@ -1,6 +1,8 @@
 const isEqual = require('lodash.isequal');
 const cloneDeep = require('lodash.clonedeep');
 
+const {handleNewStats} = require('./statsChangeHandler');
+
 // Each how many microseconds it will calculate and display the speed
 const FREQUENCY = 10000;
 const NUMBER_OF_TOP_ORDERS = 3;
@@ -31,17 +33,27 @@ setInterval(() => {
   console.log(`[sink] Speed: ${orderBookStats.updatesPerMinute} orderbooks per minute`);
 }, FREQUENCY);
 
+const getTopOrders = (ordersList, decreasingOder = false) => {
+  return ordersList.concat().sort((order1, order2) => {
+    if (decreasingOder) {
+      return parseFloat(order1[0]) - parseFloat(order2[0]);
+    }
+    return parseFloat(order2[0]) - parseFloat(order1[0]);
+  }
+  ).slice(0, NUMBER_OF_TOP_ORDERS);
+};
+
 const recomputeOrderBookStats = () => {
   // asks are sorted from lowest to highest price
-  orderBookStats.topsAsks = orderBook.asks.sort((order1, order2) => (parseFloat(order1[0]) - parseFloat(order2[0]))).slice(0, NUMBER_OF_TOP_ORDERS);
+  orderBookStats.topsAsks = getTopOrders(orderBook.asks);
   // bids are sorted from highest to lowest price
-  orderBook.topBids = orderBook.bids.sort((order1, order2) => (parseFloat(order2[0]) - parseFloat(order1[0]))).slice(0, NUMBER_OF_TOP_ORDERS);
+  orderBookStats.topBids = getTopOrders(orderBook.bids, true)
 
   const topAskPrice = orderBookStats.topsAsks[0][0];
   const topBidPrice = orderBookStats.topBids[0][0];
 
   orderBookStats.midPrice = topBidPrice + (topAskPrice - topBidPrice) / 2;
-  orderBookStats.spread = (topAskPrice - topBidPrice) / midPrice;
+  orderBookStats.spread = (topAskPrice - topBidPrice) / orderBookStats.midPrice;
 };
 
 const notifyExternalSystemsIfNeeded = () => {
@@ -51,7 +63,7 @@ const notifyExternalSystemsIfNeeded = () => {
   }
   previousOderBookStats = cloneDeep(orderBookStats);
   // we notify the external systems/clients of the change
-  //todo
+  handleNewStats(orderBookStats);
 };
 
 const triggerOrderBookPostUpdateProcessing = () => {
@@ -67,7 +79,8 @@ const computeOrderBookAfterSingleOrder = (order, ordersList) => {
     // remove the corresponding bid (with the same price) from the order book
     return ordersList.filter(item => (item[0] !== order[0]));
   } if (order[3] === 'r') {
-    // this is a republish update, do nothing
+    // this is a republish update, do nothing --> we return the same input
+    return ordersList.concat();
   }
   else {
     return ordersList.concat(order);
@@ -80,7 +93,7 @@ module.exports = {
     orderBook.asks = asks;
     orderBook.bids = bids;
     //todo remove
-    console.log('updated complete order book', JSON.stringify({ asks, bids }));
+    // console.log('updated complete order book', JSON.stringify({ asks, bids }));
     triggerOrderBookPostUpdateProcessing();
   },
 
@@ -88,15 +101,15 @@ module.exports = {
     recordNewUpdate();
 
     //todo remove
-    console.log('about to add update', JSON.stringify(orderBook))
+    // console.log('about to add update', JSON.stringify(orderBook))
     if (bids) {
       //todo remove
-      console.log('new bids received', JSON.stringify(bids));
+      // console.log('new bids received', JSON.stringify(bids));
       bids.forEach(bid => (orderBook.bids = computeOrderBookAfterSingleOrder(bid, orderBook.bids)));
     }
     if (asks) {
       //todo remove
-      console.log('new asks received', JSON.stringify(asks));
+      // console.log('new asks received', JSON.stringify(asks));
       asks.forEach(ask => (orderBook.asks = computeOrderBookAfterSingleOrder(ask, orderBook.asks)));
     }
     triggerOrderBookPostUpdateProcessing();
