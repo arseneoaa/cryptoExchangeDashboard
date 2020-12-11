@@ -1,40 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
-import KrakenExchange from './KrakenExchange';
-import { IKrakenConfig } from '../interfaces';
+import ExchangeCard from './ExchangeCard';
+import { IExchangeCardData } from '../interfaces';
 
-const krakenConfigXBTUSD: IKrakenConfig = {
-  // name displayed on the card
-  name: 'Kraken',
-  pair: 'XBT/USD',
-  // web socket part
-  wsUrl: 'ws.kraken.com',
-  // message sent to subscribe to updates
-  subscriptionMessage: {
-    event: "subscribe",
-    subscription: {
-      name: "book",
-      depth: 100
-    },
-  },
-};
-
-const krakenConfigETHUSD: IKrakenConfig = {
-  // name displayed on the card
-  name: 'Kraken',
-  pair: 'ETH/USD',
-  // web socket part
-  wsUrl: 'ws.kraken.com',
-  // message sent to subscribe to updates
-  subscriptionMessage: {
-    event: "subscribe",
-    subscription: {
-      name: "book",
-      depth: 100
-    },
-  },
-};
+import { WS_URL } from '../config';
 
 const useStyles = makeStyles({
   root: {
@@ -49,14 +20,39 @@ const useStyles = makeStyles({
 
 export default function Dashboard() {
   const classes = useStyles();
+  const [exchanges, setExchanges] = useState<IExchangeCardData[]>([]);
+
+  const [socketUrl, setSocketUrl] = useState(WS_URL);
+  const {
+    sendJsonMessage,
+    readyState, //todo update display according to this
+  } = useWebSocket(socketUrl, {
+    share: true,
+    // Will attempt to reconnect on all close events, such as server shutting down
+    shouldReconnect: (closeEvent) => true,
+    onMessage: ({ data }) => {
+      const payload = JSON.parse(data);
+
+      if (Array.isArray(payload)) {
+        // snapshot of all exchanges sent at connection time
+        setExchanges(payload)
+      } else {
+        // update for a single exchange
+        const newExchangesData = exchanges.concat();
+        const indexOfItemToUpdate = newExchangesData.findIndex(item => item.name === payload.name);
+        newExchangesData[indexOfItemToUpdate] = payload;
+        setExchanges(newExchangesData);
+      }
+    }
+  });
+
   return (
     <div className={classes.root}>
+      {exchanges.map(exchange => (
       <div className={classes.exchangeItem} >
-        <KrakenExchange config={krakenConfigXBTUSD} />
+        <ExchangeCard data={exchange}></ExchangeCard>
       </div>
-      <div className={classes.exchangeItem} >
-        <KrakenExchange config={krakenConfigETHUSD} />
-      </div>
+      ))}
     </div>
   );
 }
