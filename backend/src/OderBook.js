@@ -32,13 +32,14 @@ class OderBook {
         FREQUENCY;
 
       console.log(`[OrderBook] Speed: ${this.orderBookStats.updatesPerMinute} orderbooks per minute`);
+      this.triggerOrderBookPostUpdateProcessing();
     }, FREQUENCY);
   }
 
-  recordNewUpdate = () => this.updates.push(Date.now());
+  recordNewUpdateTime = () => this.updates.push(Date.now());
 
   resetOrderBookFromSnapshot = ({ bids, asks }) => {
-    this.recordNewUpdate();
+    this.recordNewUpdateTime();
     this.book.asks = asks;
     this.book.bids = bids;
     //todo remove
@@ -57,8 +58,8 @@ class OderBook {
     // bids are sorted from highest to lowest price
     this.orderBookStats.topBids = getTopOrders(this.book.bids, true)
 
-    const topAskPrice = this.orderBookStats.topsAsks[0][0];
-    const topBidPrice = this.orderBookStats.topBids[0][0];
+    const topAskPrice = parseFloat(this.orderBookStats.topsAsks[0][0]);
+    const topBidPrice = parseFloat(this.orderBookStats.topBids[0][0]);
 
     this.orderBookStats.midPrice = topBidPrice + (topAskPrice - topBidPrice) / 2;
     this.orderBookStats.spread = (topAskPrice - topBidPrice) / this.orderBookStats.midPrice;
@@ -85,7 +86,7 @@ class OderBook {
   }
 
   updateOrderBook({ bids, asks }) {
-    this.recordNewUpdate();
+    this.recordNewUpdateTime();
 
     //todo remove
     // console.log('about to add update', JSON.stringify(book))
@@ -121,6 +122,7 @@ function getTopOrders (ordersList, decreasingOder = false) {
 function computeOrderBookAfterSingleOrder (order, ordersList) {
   // As usual, it is important not to change the inputs but rather return the result
   // todo we could add checksum validation here
+
   const volume = parseFloat(order[1]);
   if (volume === 0) {
     // remove the corresponding bid (with the same price) from the order book
@@ -130,7 +132,9 @@ function computeOrderBookAfterSingleOrder (order, ordersList) {
     return ordersList.concat();
   }
   else {
-    return ordersList.concat(order);
+    // pushing directly would mutate the input variable
+    // concat(order) would deflate the content
+    return ordersList.concat([order]);
   }
 }
 

@@ -28,7 +28,7 @@ class Sync {
   getAllExchangesData() {
     return Object.keys(this.allExchangesData).map(name => ({
       name,
-      stats: this.allExchangesData
+      ...this.allExchangesData[name],
     }));
   }
 
