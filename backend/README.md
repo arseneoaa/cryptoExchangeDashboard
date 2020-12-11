@@ -1,11 +1,11 @@
-# `orderbook-parser`
+# Backend for monitoring crypto pairs
 
-Example projects that shows how to obtain orderbook snapshots from Kraken.
+Forked from `https://github.com/KeyrockEU/orderbook-parser`
 
 ## Requirements
 
 - You need a relatively new version of Node.js (this was tested with version 13.3.0)
-- `yarn` package manager
+- `yarn` or `npm` package manager
 
 ## How to install
 
