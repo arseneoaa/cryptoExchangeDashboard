@@ -5,8 +5,12 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import numeral from 'numeral';
 
-import { IExchangeCardComponentData } from '../interfaces'
+import { IExchangeCardData } from '../interfaces'
 
+
+type IExchangeCardComponentProps = {
+  data: IExchangeCardData,
+}
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ExchangeCard({data}: IExchangeCardComponentData) {
+export default function ExchangeCard({data}: IExchangeCardComponentProps) {
   const classes = useStyles();
 
   return (
