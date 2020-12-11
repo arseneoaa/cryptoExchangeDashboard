@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import React, { useState, useEffect } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 
-import ExchangeCard from './ExchangeCard';
-import { IExchangeCardData } from '../interfaces';
+import ExchangeCard from "./ExchangeCard";
+import { IExchangeCardData } from "../interfaces";
 
-import { WS_URL } from '../config';
+import { WS_URL } from "../config";
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex',
-    flexFlow: 'row wrap',
-    justifyContent: 'space-between'
+    display: "flex",
+    flexFlow: "row wrap",
+    justifyContent: "space-between",
   },
   exchangeItem: {
-    flex: '1 1 auto',
+    flex: "1 1 auto",
   },
 });
 
@@ -35,23 +35,25 @@ export default function Dashboard() {
 
       if (Array.isArray(payload)) {
         // snapshot of all exchanges sent at connection time
-        setExchanges(payload)
+        setExchanges(payload);
       } else {
         // update for a single exchange
         const newExchangesData = exchanges.concat();
-        const indexOfItemToUpdate = newExchangesData.findIndex(item => item.name === payload.name);
+        const indexOfItemToUpdate = newExchangesData.findIndex(
+          (item) => item.name === payload.name
+        );
         newExchangesData[indexOfItemToUpdate] = payload;
         setExchanges(newExchangesData);
       }
-    }
+    },
   });
 
   return (
     <div className={classes.root}>
-      {exchanges.map(exchange => (
-      <div className={classes.exchangeItem} >
-        <ExchangeCard data={exchange}></ExchangeCard>
-      </div>
+      {exchanges.map((exchange) => (
+        <div className={classes.exchangeItem}>
+          <ExchangeCard data={exchange}></ExchangeCard>
+        </div>
       ))}
     </div>
   );

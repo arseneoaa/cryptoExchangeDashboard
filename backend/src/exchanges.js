@@ -2,20 +2,25 @@ const WebSocket = require("ws");
 const OrderBook = require("./OderBook");
 
 // See https://www.kraken.com/features/websocket-api#message-book for payload example
-const normalizePayload = payload => {
+const normalizePayload = (payload) => {
   if (payload.length === 5) {
     // this is for update payloads with both asks and bids
     const [, { a: asks }, { b: bids }, , pair] = payload;
-    return { asks, bids, pair, payloadType: 'update' };
+    return { asks, bids, pair, payloadType: "update" };
   }
   // payload.length === 4 (see docs above)
   // this is for snapshot payloads or updates
-  const [, { as: snapShotAsks, bs: snapshotBids, a: updateAsks, b: updateBids }, , pair] = payload;
+  const [
+    ,
+    { as: snapShotAsks, bs: snapshotBids, a: updateAsks, b: updateBids },
+    ,
+    pair,
+  ] = payload;
   // ask || bid || (asks && bids)
   if (snapShotAsks && snapshotBids) {
     // this is a snapshot
     return {
-      payloadType: 'snapshot',
+      payloadType: "snapshot",
       asks: snapShotAsks,
       bids: snapshotBids,
       pair,
@@ -23,15 +28,15 @@ const normalizePayload = payload => {
   }
   // this is an update, we either have updateAsks or (exclusive or) updateBids
   return {
-    payloadType: 'update',
+    payloadType: "update",
     asks: updateAsks,
     bids: updateBids,
     pair,
-   };
+  };
 };
 
 function startKrakenMonitoring({ symbol }) {
-  const orderbook = new OrderBook('Kraken' + symbol);
+  const orderbook = new OrderBook("Kraken" + symbol);
   const ws = new WebSocket("wss://ws.kraken.com");
 
   ws.onopen = function onOpen() {
@@ -44,7 +49,7 @@ function startKrakenMonitoring({ symbol }) {
         subscription: {
           name: "book",
           depth: 100,
-        }
+        },
       })
     );
   };
@@ -59,7 +64,7 @@ function startKrakenMonitoring({ symbol }) {
         throw new Error(`${pair} update received. Expected: ${symbol}`);
       }
 
-      if (payloadType === 'snapshot') {
+      if (payloadType === "snapshot") {
         orderbook.resetOrderBookFromSnapshot({ bids, asks });
       } else {
         orderbook.updateOrderBook({ bids, asks });

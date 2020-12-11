@@ -1,19 +1,18 @@
 export interface IExchangeCardData {
-  name: string,
-  updatesPerMinute: number,
-  midPrice: number,
-  spread: number,
-  topAsks: IOrder[],
-  topBids: IOrder[],
+  name: string;
+  updatesPerMinute: number;
+  midPrice: number;
+  spread: number;
+  topAsks: IOrder[];
+  topBids: IOrder[];
 }
 
 export interface IExchangeData extends IExchangeCardData {
-  asks: any[],
-  bids: any[],
+  asks: any[];
+  bids: any[];
 }
 
 export interface IOrder {
-  price: number,
-  volume: number,
+  price: number;
+  volume: number;
 }
-

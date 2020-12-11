@@ -1,4 +1,4 @@
-const WebSocket = require('ws');
+const WebSocket = require("ws");
 
 const SERVER_PORT_NUMBER = 8088;
 
@@ -26,7 +26,9 @@ class Sync {
   };
 
   getAllExchangesData() {
-    return Object.keys(this.allExchangesData).map(name => (this.allExchangesData[name]));
+    return Object.keys(this.allExchangesData).map(
+      (name) => this.allExchangesData[name]
+    );
   }
 
   sendStatsToWSClients(data) {
@@ -36,26 +38,33 @@ class Sync {
   // todo add cleanup for closed connections
   setupWSServer() {
     const wss = new WebSocket.Server({ port: SERVER_PORT_NUMBER });
-    console.log(`[ws server] WebSocket server is listening on port ${SERVER_PORT_NUMBER}.`)
-    wss.on('connection', function connection(ws) {
-      ws.on('message', (message) => {
-        console.log('[ws server] received: %s', message);
-      });
+    console.log(
+      `[ws server] WebSocket server is listening on port ${SERVER_PORT_NUMBER}.`
+    );
+    wss.on(
+      "connection",
+      function connection(ws) {
+        ws.on("message", (message) => {
+          console.log("[ws server] received: %s", message);
+        });
 
-      console.log('this.allExchangesData', JSON.stringify(this.allExchangesData))
-      ws.send(JSON.stringify(this.getAllExchangesData()));
-    }.bind(this));
+        console.log(
+          "this.allExchangesData",
+          JSON.stringify(this.allExchangesData)
+        );
+        ws.send(JSON.stringify(this.getAllExchangesData()));
+      }.bind(this)
+    );
     return wss;
   }
 
   broadCastToAllClients(data) {
-    this.wss.clients.forEach(client => {
+    this.wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(data));
       }
     });
   }
 }
-
 
 module.exports = new Sync();

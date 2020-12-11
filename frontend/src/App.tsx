@@ -1,9 +1,8 @@
-import React from 'react';
-import Container from '@material-ui/core/Container';
+import React from "react";
+import Container from "@material-ui/core/Container";
 
-import './App.css';
-import Dashboard from './components/Dashboard';
-
+import "./App.css";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (

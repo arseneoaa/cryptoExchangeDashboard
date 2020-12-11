@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
 // Each how many milliseconds it will calculate and display the speed
 const FREQUENCY = 10000;
@@ -12,10 +12,13 @@ export function useUpdatesPerMinute() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const newUpdatesPerMinute = (updates.current.filter(u => u > Date.now() - FREQUENCY).length * 60000) / FREQUENCY;
+      const newUpdatesPerMinute =
+        (updates.current.filter((u) => u > Date.now() - FREQUENCY).length *
+          60000) /
+        FREQUENCY;
       setUpdatesPerMinute(newUpdatesPerMinute);
     }, FREQUENCY);
-    return () => (clearInterval(intervalId));
+    return () => clearInterval(intervalId);
   }, []);
 
   return {
