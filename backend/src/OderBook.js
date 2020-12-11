@@ -15,7 +15,7 @@ class OderBook {
     asks: [],
   }
   orderBookStats = {
-    topsAsks: [],
+    topAsks: [],
     topBids: [],
     midPrice: 0,
     spread: 0,
@@ -52,11 +52,11 @@ class OderBook {
 
   recomputeOrderBookStats = () => {
     // asks are sorted from lowest to highest price
-    this.orderBookStats.topsAsks = getTopOrders(this.book.asks);
+    this.orderBookStats.topAsks = getTopOrders(this.book.asks);
     // bids are sorted from highest to lowest price
     this.orderBookStats.topBids = getTopOrders(this.book.bids, true)
 
-    const topAskPrice = parseFloat(this.orderBookStats.topsAsks[0][0]);
+    const topAskPrice = parseFloat(this.orderBookStats.topAsks[0][0]);
     const topBidPrice = parseFloat(this.orderBookStats.topBids[0][0]);
 
     this.orderBookStats.midPrice = topBidPrice + (topAskPrice - topBidPrice) / 2;
