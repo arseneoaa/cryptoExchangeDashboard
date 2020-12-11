@@ -1,6 +1,5 @@
 const WebSocket = require("ws");
 const OrderBook = require("./OderBook");
-const orderbook = new OrderBook();
 
 // See https://www.kraken.com/features/websocket-api#message-book for payload example
 const normalizePayload = payload => {
@@ -31,7 +30,8 @@ const normalizePayload = payload => {
    };
 };
 
-function Kraken({ symbol }) {
+function startKrakenMonitoring({ symbol }) {
+  const orderbook = new OrderBook('Kraken' + symbol);
   const ws = new WebSocket("wss://ws.kraken.com");
 
   ws.onopen = function onOpen() {
@@ -88,5 +88,5 @@ function Kraken({ symbol }) {
 }
 
 module.exports = {
-  Kraken,
+  startKrakenMonitoring,
 };

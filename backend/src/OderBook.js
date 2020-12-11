@@ -1,13 +1,14 @@
 const isEqual = require('lodash.isequal');
 const cloneDeep = require('lodash.clonedeep');
 
-const {handleNewStats} = require('./statsChangeHandler');
+const sync = require('./synchronisationService');
 
 // Each how many microseconds it will calculate and display the speed
 const FREQUENCY = 10000;
 const NUMBER_OF_TOP_ORDERS = 3;
 
 class OderBook {
+  name = '';
   updates = [];
   book = {
     bids: [],
@@ -23,7 +24,8 @@ class OderBook {
   // used to know when to update external systems/clients about changes in the tracked values
   previousOderBookStats = {};
 
-  constructor() {
+  constructor(name) {
+    this.name = name;
     setInterval(() => {
       this.orderBookStats.updatesPerMinute =
         (this.updates.filter(u => u > Date.now() - FREQUENCY).length * 60000) /
@@ -70,8 +72,10 @@ class OderBook {
     this.previousOderBookStats = this.getOrderBookStats();
     // we notify the external systems/clients of the change
     // we send a copy as it is an external module
-    // todo check import model
-    handleNewStats(this.getOrderBookStats());
+    sync.handleNewStats({
+      name: this.name,
+      stats: this.getOrderBookStats(),
+    });
   };
 
   getOrderBookStats = () => {
