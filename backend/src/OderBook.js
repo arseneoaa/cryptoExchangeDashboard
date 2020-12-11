@@ -31,7 +31,7 @@ class OderBook {
         (this.updates.filter(u => u > Date.now() - FREQUENCY).length * 60000) /
         FREQUENCY;
 
-      console.log(`[OrderBook] Speed: ${this.orderBookStats.updatesPerMinute} orderbooks per minute`);
+      console.log(`[OrderBook ${name}] Speed: ${this.orderBookStats.updatesPerMinute} orderbooks per minute`);
       this.triggerOrderBookPostUpdateProcessing();
     }, FREQUENCY);
   }
@@ -42,8 +42,6 @@ class OderBook {
     this.recordNewUpdateTime();
     this.book.asks = asks;
     this.book.bids = bids;
-    //todo remove
-    // console.log('updated complete order book', JSON.stringify({ asks, bids }));
     this.triggerOrderBookPostUpdateProcessing();
   }
 
@@ -88,16 +86,10 @@ class OderBook {
   updateOrderBook({ bids, asks }) {
     this.recordNewUpdateTime();
 
-    //todo remove
-    // console.log('about to add update', JSON.stringify(book))
     if (bids) {
-      //todo remove
-      // console.log('new bids received', JSON.stringify(bids));
       bids.forEach(bid => (this.book.bids = computeOrderBookAfterSingleOrder(bid, this.book.bids)));
     }
     if (asks) {
-      //todo remove
-      // console.log('new asks received', JSON.stringify(asks));
       asks.forEach(ask => (this.book.asks = computeOrderBookAfterSingleOrder(ask, this.book.asks)));
     }
     this.triggerOrderBookPostUpdateProcessing();

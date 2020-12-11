@@ -35,7 +35,7 @@ function startKrakenMonitoring({ symbol }) {
   const ws = new WebSocket("wss://ws.kraken.com");
 
   ws.onopen = function onOpen() {
-    console.log("[kraken] Connection open");
+    console.log(`[kraken ${symbol}] Connection open`);
 
     ws.send(
       JSON.stringify({
@@ -60,7 +60,6 @@ function startKrakenMonitoring({ symbol }) {
       }
 
       if (payloadType === 'snapshot') {
-        // console.log('snapshot', JSON.stringify({ bids, asks }))
         orderbook.resetOrderBookFromSnapshot({ bids, asks });
       } else {
         orderbook.updateOrderBook({ bids, asks });
@@ -68,7 +67,7 @@ function startKrakenMonitoring({ symbol }) {
     } else {
       const { event } = payload;
       if (event === "heartbeat") {
-        console.log("[kraken] Heartbeat received");
+        console.log(`[kraken ${symbol}] Heartbeat received`);
       } else if (["systemStatus", "subscriptionStatus"].includes(event)) {
         // do nothing
       } else {
