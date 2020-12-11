@@ -17,17 +17,3 @@ export interface IOrder {
   volume: number,
 }
 
-export interface IKrakenConfig {
-  name: string,
-  pair: string,
-  // web socket part
-  wsUrl: string,
-  // message sent to subscribe to updates
-  subscriptionMessage: {
-    event: string,
-    subscription: {
-      name: string,
-      depth: number
-    },
-  },
-};
