@@ -48,10 +48,6 @@ class Sync {
           console.log("[ws server] received: %s", message);
         });
 
-        console.log(
-          "this.allExchangesData",
-          JSON.stringify(this.allExchangesData)
-        );
         ws.send(JSON.stringify(this.getAllExchangesData()));
       }.bind(this)
     );
