@@ -16,7 +16,7 @@ class Sync {
   handleNewStats = (data) => {
     // when new stats come up, we want to:
     // update the locally saved results,
-    this.allExchangesData[data.name] = data.stats;
+    this.allExchangesData[data.name] = data;
     // send this raw info to the ws clients
     // later on, we can do some processing to get actionable insights and determine
     // if other notifications like email/phone call need to be sent too
@@ -26,10 +26,7 @@ class Sync {
   };
 
   getAllExchangesData() {
-    return Object.keys(this.allExchangesData).map(name => ({
-      name,
-      ...this.allExchangesData[name],
-    }));
+    return Object.keys(this.allExchangesData).map(name => (this.allExchangesData[name]));
   }
 
   sendStatsToWSClients(data) {
@@ -45,6 +42,7 @@ class Sync {
         console.log('[ws server] received: %s', message);
       });
 
+      console.log('this.allExchangesData', JSON.stringify(this.allExchangesData))
       ws.send(JSON.stringify(this.getAllExchangesData()));
     }.bind(this));
     return wss;

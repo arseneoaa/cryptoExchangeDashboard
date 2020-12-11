@@ -73,7 +73,7 @@ class OderBook {
     // we send a copy as it is an external module
     sync.handleNewStats({
       name: this.name,
-      stats: this.getOrderBookStats(),
+      ...this.getOrderBookStats(),
     });
   };
 
