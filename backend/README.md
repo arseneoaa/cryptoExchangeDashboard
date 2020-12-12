@@ -1,6 +1,7 @@
 # Backend for monitoring crypto pairs
 
 Forked from `https://github.com/KeyrockEU/orderbook-parser`
+Starting this will expose a websocket backend connecting to the APIs of crypto-currency exchanges and serving updates for monitoring purposes.
 
 ## Requirements
 
@@ -16,6 +17,19 @@ Forked from `https://github.com/KeyrockEU/orderbook-parser`
 
 Just `yarn start`.
 
+## How it works
+
+The code is all in the `src` folder.
+`syncrhonisationService` is an orchestrator singleton that records data from the exchanges that need to be stored and shares it to the websocket clients for example.
+
+It's `handleNewStats` method is called by the processes for each exchange/key-pair to save the new state of the monitoring for that key-pair on that exchange.
+
+Each exchange process like `startKrakenMonitoring` can use and instance of the `OrderBook` class to record order book snapshot and updates.
+
+## Supported exchanges
+
+- Kraken
+
 ## Next steps
 
 - check logic
@@ -27,3 +41,4 @@ Just `yarn start`.
 - error handling
 - restart ws connection to exchanges if it breaks
 - add some type checking as the project might grow
+- add more exchanges
