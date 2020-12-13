@@ -1,5 +1,5 @@
 {
-  "name": "orderbook-parser",
+  "name": "crypto_monitoring",
   "version": "1.0.0",
   "main": "src/index.js",
   "author": "Keyrock",

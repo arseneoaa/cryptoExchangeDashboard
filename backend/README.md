@@ -5,7 +5,7 @@ Starting this will expose a websocket backend connecting to the APIs of crypto-c
 
 ## Requirements
 
-- You need a relatively new version of Node.js (this was tested with version 13.3.0)
+- You need a relatively new version of Node.js (this was tested with version 12.13.1)
 - `yarn` or `npm` package manager
 
 ## How to install

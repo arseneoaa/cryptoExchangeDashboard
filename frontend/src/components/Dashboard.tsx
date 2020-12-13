@@ -51,7 +51,7 @@ export default function Dashboard() {
   return (
     <div className={classes.root}>
       {exchanges.map((exchange) => (
-        <div className={classes.exchangeItem}>
+        <div className={classes.exchangeItem} key={exchange.name}>
           <ExchangeCard data={exchange}></ExchangeCard>
         </div>
       ))}
