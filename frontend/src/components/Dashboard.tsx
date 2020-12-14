@@ -5,7 +5,7 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import ExchangeCard from "./ExchangeCard";
 import { IExchangeCardData } from "../interfaces";
 
-import { WS_URL } from "../config";
+import { WS_URL, FORMATTINGS } from "../config";
 
 const useStyles = makeStyles({
   root: {
@@ -52,7 +52,7 @@ export default function Dashboard() {
     <div className={classes.root}>
       {exchanges.map((exchange) => (
         <div className={classes.exchangeItem} key={exchange.name}>
-          <ExchangeCard data={exchange}></ExchangeCard>
+          <ExchangeCard data={exchange} formatting={FORMATTINGS[exchange.name]}></ExchangeCard>
         </div>
       ))}
     </div>

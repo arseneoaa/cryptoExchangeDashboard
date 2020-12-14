@@ -12,7 +12,11 @@ export interface IExchangeData extends IExchangeCardData {
   bids: any[];
 }
 
-export interface IOrder {
-  price: number;
-  volume: number;
+type IOrder = [string, string, string]
+
+export interface IExchangeCardFormat {
+  speed: string,
+  price: string,
+  volume: string,
+  spread: string,
 }

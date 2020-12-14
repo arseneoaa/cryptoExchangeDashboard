@@ -131,7 +131,7 @@ class OderBook {
     const top10Bids = getTopOrders(newListOfBids, 10, true);
     const concatenated = concatenateOrders(top10Asks) + concatenateOrders(top10Bids);
     const computedChecksum = crc32.str(concatenated) >>> 0;
-    console.log(`order checksum ${orderCheckSum}, computed checksum ${computedChecksum}`);
+    // console.log(`order checksum ${orderCheckSum}, computed checksum ${computedChecksum}`);
     if (Number(computedChecksum) !== Number(orderCheckSum)) {
       //todo
       // console.log('top10Asks', top10Asks)
