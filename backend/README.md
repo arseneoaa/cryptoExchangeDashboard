@@ -36,12 +36,10 @@ Run `npm run test` or `yarn test` to run the jest test suites
 
 ## Next steps
 
-- check logic
-- add unit and e2e testing
-  - singleton/multiple instances where needed
-  - book snapshot and update handling and checksum
+- Complete checksum verification
+- add more unit and e2e testing
 - error handling
 - restart ws connection to exchanges if it breaks
-- add some type checking as the project might grow
+- add some type checking
 - add more exchanges
 - check load with 10+ keypairs
