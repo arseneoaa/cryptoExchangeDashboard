@@ -1,6 +1,6 @@
 const isEqual = require("lodash.isequal");
 const cloneDeep = require("lodash.clonedeep");
-const crc32 = require('crc-32');
+const crc32 = require("crc-32");
 
 const sync = require("./synchronisationService");
 
@@ -50,12 +50,10 @@ class OderBook {
   };
 
   triggerOrderBookPostUpdateProcessing = () => {
-    const {
-      topAsks,
-      topBids,
-      midPrice,
-      spread,
-    } = computeOrderBookStats(this.book.asks, this.book.bids);
+    const { topAsks, topBids, midPrice, spread } = computeOrderBookStats(
+      this.book.asks,
+      this.book.bids
+    );
     this.orderBookStats = {
       ...this.orderBookStats,
       topAsks,
@@ -65,7 +63,6 @@ class OderBook {
     };
     this.notifyExternalSystemsIfNeeded();
   };
-
 
   notifyExternalSystemsIfNeeded = () => {
     if (isEqual(this.previousOderBookStats, this.orderBookStats)) {
@@ -96,19 +93,13 @@ class OderBook {
     if (bids) {
       bids.forEach(
         (bid) =>
-          (newListOfBids = computeOrderBookAfterSingleOrder(
-            bid,
-            newListOfBids
-          ))
+          (newListOfBids = computeOrderBookAfterSingleOrder(bid, newListOfBids))
       );
     }
     if (asks) {
       asks.forEach(
         (ask) =>
-          (newListOfAsks = computeOrderBookAfterSingleOrder(
-            ask,
-            newListOfAsks
-          ))
+          (newListOfAsks = computeOrderBookAfterSingleOrder(ask, newListOfAsks))
       );
     }
     // we check the checksum before updating the book
@@ -124,12 +115,13 @@ class OderBook {
 
   verifyChecksum(newListOfAsks, newListOfBids, orderCheckSum) {
     if (!orderCheckSum && orderCheckSum !== 0) {
-      console.warn(`[${this.name}] no checksum provided for comparison`)
+      console.warn(`[${this.name}] no checksum provided for comparison`);
       return;
     }
     const top10Asks = getTopOrders(newListOfAsks, 10);
     const top10Bids = getTopOrders(newListOfBids, 10, true);
-    const concatenated = concatenateOrders(top10Asks) + concatenateOrders(top10Bids);
+    const concatenated =
+      concatenateOrders(top10Asks) + concatenateOrders(top10Bids);
     const computedChecksum = crc32.str(concatenated) >>> 0;
     // console.log(`order checksum ${orderCheckSum}, computed checksum ${computedChecksum}`);
     if (Number(computedChecksum) !== Number(orderCheckSum)) {
@@ -137,23 +129,27 @@ class OderBook {
       // console.log('top10Asks', top10Asks)
       // console.log('top10Bids', top10Bids)
       // throw new Error(`[${this.name}] checksum mismatch`);
-    };
+    }
   }
 }
 
 function concatenateOrders(orders) {
-  let result = '';
-  orders.forEach(item => {
+  let result = "";
+  orders.forEach((item) => {
     result += formatValueForChecksum(item[0]) + formatValueForChecksum(item[1]);
   });
   return result;
 }
 
 function formatValueForChecksum(value) {
-  return String(Number(value.replace('.', '')))
+  return String(Number(value.replace(".", "")));
 }
 
-function getTopOrders(ordersList, numberOfOrdersToReturn, decreasingOrder = false) {
+function getTopOrders(
+  ordersList,
+  numberOfOrdersToReturn,
+  decreasingOrder = false
+) {
   return ordersList
     .concat()
     .sort((order1, order2) => {
@@ -184,7 +180,7 @@ function computeOrderBookAfterSingleOrder(order, ordersList) {
   }
 }
 
-function computeOrderBookStats (asks, bids) {
+function computeOrderBookStats(asks, bids) {
   // asks are sorted from lowest to highest price
   const topAsks = getTopOrders(asks, NUMBER_OF_TOP_ORDERS);
   // bids are sorted from highest to lowest price
@@ -193,16 +189,14 @@ function computeOrderBookStats (asks, bids) {
   const topAskPrice = parseFloat(topAsks[0][0]);
   const topBidPrice = parseFloat(topBids[0][0]);
 
-  const midPrice =
-    topBidPrice + (topAskPrice - topBidPrice) / 2;
-  const spread =
-    (topAskPrice - topBidPrice) / midPrice;
+  const midPrice = topBidPrice + (topAskPrice - topBidPrice) / 2;
+  const spread = (topAskPrice - topBidPrice) / midPrice;
   return {
     topAsks,
     topBids,
     midPrice,
     spread,
-  }
+  };
 }
 
 // the external interface consists of the following methods

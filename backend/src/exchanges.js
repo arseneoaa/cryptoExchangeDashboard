@@ -12,7 +12,13 @@ const normalizePayload = (payload) => {
   // this is for snapshot payloads or updates
   const [
     ,
-    { as: snapShotAsks, bs: snapshotBids, a: updateAsks, b: updateBids, c: checksum },
+    {
+      as: snapShotAsks,
+      bs: snapshotBids,
+      a: updateAsks,
+      b: updateBids,
+      c: checksum,
+    },
     ,
     pair,
   ] = payload;
@@ -59,7 +65,9 @@ function startKrakenMonitoring({ symbol }) {
     const payload = JSON.parse(data);
 
     if (Array.isArray(payload)) {
-      const { asks, bids, pair, payloadType, checksum } = normalizePayload(payload);
+      const { asks, bids, pair, payloadType, checksum } = normalizePayload(
+        payload
+      );
 
       if (pair !== symbol) {
         throw new Error(`${pair} update received. Expected: ${symbol}`);
