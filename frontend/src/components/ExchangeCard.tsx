@@ -51,7 +51,10 @@ const defaultExchangeCardFormat: IExchangeCardFormat = {
   spread: "0.00%",
 };
 
-export default function ExchangeCard({ data, formatting = defaultExchangeCardFormat }: IExchangeCardComponentProps) {
+export default function ExchangeCard({
+  data,
+  formatting = defaultExchangeCardFormat,
+}: IExchangeCardComponentProps) {
   const classes = useStyles();
 
   return (
@@ -59,7 +62,8 @@ export default function ExchangeCard({ data, formatting = defaultExchangeCardFor
       <CardContent>
         <span className={classes.exchangeName}>{data.name}</span>
         <Typography variant="subtitle1" component="p">
-          speed: {numeral(data.updatesPerMinute).format(formatting.speed)} ob/min
+          speed: {numeral(data.updatesPerMinute).format(formatting.speed)}{" "}
+          ob/min
         </Typography>
         {data.topAsks.map((item, index) => (
           <div className={classes.orderBookLine} key={index}>

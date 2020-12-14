@@ -1,11 +1,9 @@
-import { IExchangeCardFormat } from './interfaces'
-
+import { IExchangeCardFormat } from "./interfaces";
 
 export const WS_URL = "ws://localhost:8088/ws";
 
-
-interface FormattingsProps  {
-  [x: string]: IExchangeCardFormat
+interface FormattingsProps {
+  [x: string]: IExchangeCardFormat;
 }
 export const FORMATTINGS: FormattingsProps = {
   "KrakenETH/XBT": {
@@ -13,5 +11,5 @@ export const FORMATTINGS: FormattingsProps = {
     price: "0.000000",
     volume: "0.0",
     spread: "0.00%",
-  }
+  },
 };
