@@ -1,5 +1,6 @@
 const isEqual = require("lodash.isequal");
 const cloneDeep = require("lodash.clonedeep");
+const crc32 = require('crc-32');
 
 const sync = require("./synchronisationService");
 
@@ -55,9 +56,9 @@ class OderBook {
 
   recomputeOrderBookStats = () => {
     // asks are sorted from lowest to highest price
-    this.orderBookStats.topAsks = getTopOrders(this.book.asks);
+    this.orderBookStats.topAsks = getTopOrders(this.book.asks, NUMBER_OF_TOP_ORDERS);
     // bids are sorted from highest to lowest price
-    this.orderBookStats.topBids = getTopOrders(this.book.bids, true);
+    this.orderBookStats.topBids = getTopOrders(this.book.bids, NUMBER_OF_TOP_ORDERS, true);
 
     const topAskPrice = parseFloat(this.orderBookStats.topAsks[0][0]);
     const topBidPrice = parseFloat(this.orderBookStats.topBids[0][0]);
@@ -88,41 +89,82 @@ class OderBook {
     return cloneDeep(this.orderBookStats);
   };
 
-  updateOrderBook({ bids, asks }) {
+  updateOrderBook({ bids, asks, checksum }) {
+    // console.log('about to update oderbook with', JSON.stringify(bids), JSON.stringify(asks), checksum);
     this.recordNewUpdateTime();
+    let newListOfBids = this.book.bids.concat();
+    let newListOfAsks = this.book.asks.concat();
 
     if (bids) {
       bids.forEach(
         (bid) =>
-          (this.book.bids = computeOrderBookAfterSingleOrder(
+          (newListOfBids = computeOrderBookAfterSingleOrder(
             bid,
-            this.book.bids
+            newListOfBids
           ))
       );
     }
     if (asks) {
       asks.forEach(
         (ask) =>
-          (this.book.asks = computeOrderBookAfterSingleOrder(
+          (newListOfAsks = computeOrderBookAfterSingleOrder(
             ask,
-            this.book.asks
+            newListOfAsks
           ))
       );
     }
+    // we check the checksum before updating the book
+    this.verifyChecksum(newListOfAsks, newListOfBids, checksum);
+    if (newListOfAsks) {
+      this.book.asks = newListOfAsks;
+    }
+    if (newListOfBids) {
+      this.book.bids = newListOfBids;
+    }
     this.triggerOrderBookPostUpdateProcessing();
+  }
+
+  verifyChecksum(newListOfAsks, newListOfBids, orderCheckSum) {
+    if (!orderCheckSum && orderCheckSum !== 0) {
+      console.warn(`[${this.name}] no checksum provided for comparison`)
+      return;
+    }
+    const top10Asks = getTopOrders(newListOfAsks, 10);
+    const top10Bids = getTopOrders(newListOfBids, 10, true);
+    const concatenated = concatenateOrders(top10Asks) + concatenateOrders(top10Bids);
+    const computedChecksum = crc32.str(concatenated) >>> 0;
+    console.log(`order checksum ${orderCheckSum}, computed checksum ${computedChecksum}`);
+    if (Number(computedChecksum) !== Number(orderCheckSum)) {
+      //todo
+      // console.log('top10Asks', top10Asks)
+      // console.log('top10Bids', top10Bids)
+      // throw new Error(`[${this.name}] checksum mismatch`);
+    };
   }
 }
 
-function getTopOrders(ordersList, decreasingOder = false) {
+function concatenateOrders(orders) {
+  let result = '';
+  orders.forEach(item => {
+    result += formatValueForChecksum(item[0]) + formatValueForChecksum(item[1]);
+  });
+  return result;
+}
+
+function formatValueForChecksum(value) {
+  return String(Number(value.replace('.', '')))
+}
+
+function getTopOrders(ordersList, numberOfOrdersToReturn, decreasingOrder = false) {
   return ordersList
     .concat()
     .sort((order1, order2) => {
-      if (decreasingOder) {
-        return parseFloat(order1[0]) - parseFloat(order2[0]);
+      if (decreasingOrder) {
+        return parseFloat(order2[0]) - parseFloat(order1[0]);
       }
-      return parseFloat(order2[0]) - parseFloat(order1[0]);
+      return parseFloat(order1[0]) - parseFloat(order2[0]);
     })
-    .slice(0, NUMBER_OF_TOP_ORDERS);
+    .slice(0, numberOfOrdersToReturn);
 }
 
 function computeOrderBookAfterSingleOrder(order, ordersList) {

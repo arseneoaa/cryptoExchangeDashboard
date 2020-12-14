@@ -5,14 +5,14 @@ const OrderBook = require("./OderBook");
 const normalizePayload = (payload) => {
   if (payload.length === 5) {
     // this is for update payloads with both asks and bids
-    const [, { a: asks }, { b: bids }, , pair] = payload;
+    const [, { a: asks }, { b: bids, c: checksum }, , pair] = payload;
     return { asks, bids, pair, payloadType: "update" };
   }
   // payload.length === 4 (see docs above)
   // this is for snapshot payloads or updates
   const [
     ,
-    { as: snapShotAsks, bs: snapshotBids, a: updateAsks, b: updateBids },
+    { as: snapShotAsks, bs: snapshotBids, a: updateAsks, b: updateBids, c: checksum },
     ,
     pair,
   ] = payload;
@@ -32,6 +32,7 @@ const normalizePayload = (payload) => {
     asks: updateAsks,
     bids: updateBids,
     pair,
+    checksum,
   };
 };
 
@@ -58,7 +59,7 @@ function startKrakenMonitoring({ symbol }) {
     const payload = JSON.parse(data);
 
     if (Array.isArray(payload)) {
-      const { asks, bids, pair, payloadType } = normalizePayload(payload);
+      const { asks, bids, pair, payloadType, checksum } = normalizePayload(payload);
 
       if (pair !== symbol) {
         throw new Error(`${pair} update received. Expected: ${symbol}`);
@@ -67,7 +68,7 @@ function startKrakenMonitoring({ symbol }) {
       if (payloadType === "snapshot") {
         orderbook.resetOrderBookFromSnapshot({ bids, asks });
       } else {
-        orderbook.updateOrderBook({ bids, asks });
+        orderbook.updateOrderBook({ bids, asks, checksum });
       }
     } else {
       const { event } = payload;
