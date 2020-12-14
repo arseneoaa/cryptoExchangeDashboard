@@ -50,24 +50,22 @@ class OderBook {
   };
 
   triggerOrderBookPostUpdateProcessing = () => {
-    this.recomputeOrderBookStats();
+    const {
+      topAsks,
+      topBids,
+      midPrice,
+      spread,
+    } = computeOrderBookStats(this.book.asks, this.book.bids);
+    this.orderBookStats = {
+      ...this.orderBookStats,
+      topAsks,
+      topBids,
+      midPrice,
+      spread,
+    };
     this.notifyExternalSystemsIfNeeded();
   };
 
-  recomputeOrderBookStats = () => {
-    // asks are sorted from lowest to highest price
-    this.orderBookStats.topAsks = getTopOrders(this.book.asks, NUMBER_OF_TOP_ORDERS);
-    // bids are sorted from highest to lowest price
-    this.orderBookStats.topBids = getTopOrders(this.book.bids, NUMBER_OF_TOP_ORDERS, true);
-
-    const topAskPrice = parseFloat(this.orderBookStats.topAsks[0][0]);
-    const topBidPrice = parseFloat(this.orderBookStats.topBids[0][0]);
-
-    this.orderBookStats.midPrice =
-      topBidPrice + (topAskPrice - topBidPrice) / 2;
-    this.orderBookStats.spread =
-      (topAskPrice - topBidPrice) / this.orderBookStats.midPrice;
-  };
 
   notifyExternalSystemsIfNeeded = () => {
     if (isEqual(this.previousOderBookStats, this.orderBookStats)) {
@@ -183,6 +181,27 @@ function computeOrderBookAfterSingleOrder(order, ordersList) {
     // pushing directly would mutate the input variable
     // concat(order) would deflate the content
     return ordersList.concat([order]);
+  }
+}
+
+function computeOrderBookStats (asks, bids) {
+  // asks are sorted from lowest to highest price
+  const topAsks = getTopOrders(asks, NUMBER_OF_TOP_ORDERS);
+  // bids are sorted from highest to lowest price
+  const topBids = getTopOrders(bids, NUMBER_OF_TOP_ORDERS, true);
+
+  const topAskPrice = parseFloat(topAsks[0][0]);
+  const topBidPrice = parseFloat(topBids[0][0]);
+
+  const midPrice =
+    topBidPrice + (topAskPrice - topBidPrice) / 2;
+  const spread =
+    (topAskPrice - topBidPrice) / midPrice;
+  return {
+    topAsks,
+    topBids,
+    midPrice,
+    spread,
   }
 }
 

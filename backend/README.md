@@ -30,6 +30,10 @@ Each exchange process like `startKrakenMonitoring` can use and instance of the `
 
 - Kraken
 
+## Testing
+
+Run `npm run test` or `yarn test` to run the jest test suites
+
 ## Next steps
 
 - check logic
