@@ -85,7 +85,6 @@ class OderBook {
   };
 
   updateOrderBook({ bids, asks, checksum }) {
-    // console.log('about to update oderbook with', JSON.stringify(bids), JSON.stringify(asks), checksum);
     this.recordNewUpdateTime();
     let newListOfBids = this.book.bids.concat();
     let newListOfAsks = this.book.asks.concat();
@@ -123,12 +122,8 @@ class OderBook {
     const concatenated =
       concatenateOrders(top10Asks) + concatenateOrders(top10Bids);
     const computedChecksum = crc32.str(concatenated) >>> 0;
-    // console.log(`order checksum ${orderCheckSum}, computed checksum ${computedChecksum}`);
     if (Number(computedChecksum) !== Number(orderCheckSum)) {
-      //todo
-      // console.log('top10Asks', top10Asks)
-      // console.log('top10Bids', top10Bids)
-      // throw new Error(`[${this.name}] checksum mismatch`);
+      throw new Error(`[${this.name}] checksum mismatch`);
     }
   }
 }
@@ -163,7 +158,8 @@ function getTopOrders(
 
 function computeOrderBookAfterSingleOrder(order, ordersList) {
   // As usual, it is important not to change the inputs but rather return the result
-  // todo we could add checksum validation here
+  // documentation on how to maintain a valid orderbook:
+  // https://support.kraken.com/hc/en-us/articles/360027821131-How-to-maintain-a-valid-order-book-
 
   const volume = parseFloat(order[1]);
   if (volume === 0) {
@@ -174,9 +170,19 @@ function computeOrderBookAfterSingleOrder(order, ordersList) {
     // this is a republish update, do nothing --> we return the same input
     return ordersList.concat();
   } else {
-    // pushing directly would mutate the input variable
-    // concat(order) would deflate the content
-    return ordersList.concat([order]);
+    // we either have to update a price level already in the book
+    // or insert a new one
+    const indexOfPriceLevelToUpdate = ordersList.findIndex(priceLevel => priceLevel[0] === order[0]);
+    if (indexOfPriceLevelToUpdate === -1) {
+      // pushing directly would mutate the input variable
+      // concat(order) would deflate the content
+      return ordersList.concat([order]);
+    }
+    else {
+      const orderListCopy = ordersList.concat();
+      orderListCopy[indexOfPriceLevelToUpdate] = order;
+      return orderListCopy;
+    }
   }
 }
 
