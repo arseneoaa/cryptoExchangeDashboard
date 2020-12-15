@@ -1,5 +1,5 @@
 const WebSocket = require("ws");
-const OrderBook = require("./OderBook");
+const OrderBook = require("./OrderBook");
 
 // See https://www.kraken.com/features/websocket-api#message-book for payload example
 const normalizePayload = (payload) => {

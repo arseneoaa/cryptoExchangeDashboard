@@ -1,4 +1,4 @@
-const OrderBook = require("../src/OderBook");
+const OrderBook = require("../src/OrderBook");
 const { testOrders, testOrderBookStats } = require("./data");
 
 jest.mock("../src/synchronisationService");
