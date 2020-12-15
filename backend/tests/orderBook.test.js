@@ -13,7 +13,6 @@ test("OrderBook api to be defined", () => {
 test("Order Book stats to be correct after post processing", () => {
   const orderbook = new OrderBook();
   orderbook.resetOrderBookFromSnapshot(testOrders);
-  orderbook.triggerOrderBookPostUpdateProcessing();
 
   expect(orderbook.orderBookStats).toEqual(testOrderBookStats);
 });
