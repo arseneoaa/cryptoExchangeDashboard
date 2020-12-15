@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node src",
-    "test": "jest"
+    "test": "jest",
+    "loadtest": "node tests/loadTesting"
   },
   "dependencies": {
     "crc-32": "^1.2.0",

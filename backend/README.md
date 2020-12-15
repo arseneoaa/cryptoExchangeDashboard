@@ -34,9 +34,10 @@ Each exchange process like `startKrakenMonitoring` can use and instance of the `
 
 Run `npm run test` or `yarn test` to run the jest test suites
 
+
+Load testing with 50 random keypairs is setup and can be run with `npm run loadtest`
 ## Next steps
 
-- Complete checksum verification
 - add more unit and e2e testing
 - error handling
 - restart ws connection to exchanges if it breaks
