@@ -102,7 +102,7 @@ class OderBook {
       );
     }
     // we check the checksum before updating the book
-    this.verifyChecksum(newListOfAsks, newListOfBids, checksum);
+    verifyChecksum(newListOfAsks, newListOfBids, checksum, this.name);
     if (newListOfAsks) {
       this.book.asks = newListOfAsks;
     }
@@ -112,19 +112,20 @@ class OderBook {
     this.triggerOrderBookPostUpdateProcessing();
   }
 
-  verifyChecksum(newListOfAsks, newListOfBids, orderCheckSum) {
-    if (!orderCheckSum && orderCheckSum !== 0) {
-      console.warn(`[${this.name}] no checksum provided for comparison`);
-      return;
-    }
-    const top10Asks = getTopOrders(newListOfAsks, 10);
-    const top10Bids = getTopOrders(newListOfBids, 10, true);
-    const concatenated =
-      concatenateOrders(top10Asks) + concatenateOrders(top10Bids);
-    const computedChecksum = crc32.str(concatenated) >>> 0;
-    if (Number(computedChecksum) !== Number(orderCheckSum)) {
-      throw new Error(`[${this.name}] checksum mismatch`);
-    }
+}
+
+function verifyChecksum(newListOfAsks, newListOfBids, orderCheckSum, name) {
+  if (!orderCheckSum && orderCheckSum !== 0) {
+    console.warn(`[${name}] no checksum provided for comparison`);
+    return;
+  }
+  const top10Asks = getTopOrders(newListOfAsks, 10);
+  const top10Bids = getTopOrders(newListOfBids, 10, true);
+  const concatenated =
+    concatenateOrders(top10Asks) + concatenateOrders(top10Bids);
+  const computedChecksum = crc32.str(concatenated) >>> 0;
+  if (Number(computedChecksum) !== Number(orderCheckSum)) {
+    throw new Error(`[${name}] checksum mismatch`);
   }
 }
 
