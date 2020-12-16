@@ -9,13 +9,21 @@ import { WS_URL, FORMATTINGS } from "../config";
 
 const useStyles = makeStyles({
   root: {
+    display: 'flex',
+    flexFlow: "column",
+  },
+  exchanges: {
     display: "flex",
     flexFlow: "row wrap",
     justifyContent: "space-between",
   },
   exchangeItem: {
     flex: "1 1 auto",
+    margin: "20px",
   },
+  moreInfo: {
+    marginTop: '100px',
+  }
 });
 
 export default function Dashboard() {
@@ -50,14 +58,18 @@ export default function Dashboard() {
 
   return (
     <div className={classes.root}>
-      {exchanges.map((exchange) => (
-        <div className={classes.exchangeItem} key={exchange.name}>
-          <ExchangeCard
-            data={exchange}
-            formatting={FORMATTINGS[exchange.name]}
-          ></ExchangeCard>
-        </div>
-      ))}
+      <h1>Crypto pairs monitoring dashboard</h1>
+      <div className={classes.exchanges}>
+        {exchanges.map((exchange) => (
+          <div className={classes.exchangeItem} key={exchange.name}>
+            <ExchangeCard
+              data={exchange}
+              formatting={FORMATTINGS[exchange.name]}
+            ></ExchangeCard>
+          </div>
+        ))}
+      </div>
+      <span className={classes.moreInfo}>More info <a target="_blank" href="https://github.com/arseneoaa/cryptoExchangeDashboard">here.</a> </span>
     </div>
   );
 }

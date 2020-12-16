@@ -14,7 +14,7 @@ type IExchangeCardComponentProps = {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 275,
+    width: "250px",
   },
   exchangeName: {
     fontSize: 14,
