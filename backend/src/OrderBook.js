@@ -111,7 +111,6 @@ class OderBook {
     }
     this.triggerOrderBookPostUpdateProcessing();
   }
-
 }
 
 function verifyChecksum(newListOfAsks, newListOfBids, orderCheckSum, name) {
@@ -173,13 +172,14 @@ function computeOrderBookAfterSingleOrder(order, ordersList) {
   } else {
     // we either have to update a price level already in the book
     // or insert a new one
-    const indexOfPriceLevelToUpdate = ordersList.findIndex(priceLevel => priceLevel[0] === order[0]);
+    const indexOfPriceLevelToUpdate = ordersList.findIndex(
+      (priceLevel) => priceLevel[0] === order[0]
+    );
     if (indexOfPriceLevelToUpdate === -1) {
       // pushing directly would mutate the input variable
       // concat(order) would deflate the content
       return ordersList.concat([order]);
-    }
-    else {
+    } else {
       const orderListCopy = ordersList.concat();
       orderListCopy[indexOfPriceLevelToUpdate] = order;
       return orderListCopy;

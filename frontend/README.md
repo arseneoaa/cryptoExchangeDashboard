@@ -59,6 +59,5 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ## Next steps
 
-- add visual clues for speed, spread, etc
 - add automatic linter
 - use theme for color and spacing in order to add dark mode + use fixed width fonts

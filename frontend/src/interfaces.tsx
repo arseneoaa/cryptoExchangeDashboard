@@ -20,3 +20,8 @@ export interface IExchangeCardFormat {
   volume: string;
   spread: string;
 }
+
+export interface IExchangeCardWarningThresholdsFormat {
+  speed: number;
+  spread: number;
+}

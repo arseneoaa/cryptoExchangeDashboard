@@ -5,11 +5,11 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import ExchangeCard from "./ExchangeCard";
 import { IExchangeCardData } from "../interfaces";
 
-import { WS_URL, FORMATTINGS } from "../config";
+import { WS_URL, FORMATTINGS, THRESHOLDS } from "../config";
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex',
+    display: "flex",
     flexFlow: "column",
   },
   exchanges: {
@@ -22,8 +22,8 @@ const useStyles = makeStyles({
     margin: "20px",
   },
   moreInfo: {
-    marginTop: '100px',
-  }
+    marginTop: "100px",
+  },
 });
 
 export default function Dashboard() {
@@ -65,11 +65,20 @@ export default function Dashboard() {
             <ExchangeCard
               data={exchange}
               formatting={FORMATTINGS[exchange.name]}
+              thresholds={THRESHOLDS[exchange.name]}
             ></ExchangeCard>
           </div>
         ))}
       </div>
-      <span className={classes.moreInfo}>More info <a target="_blank" href="https://github.com/arseneoaa/cryptoExchangeDashboard">here.</a> </span>
+      <span className={classes.moreInfo}>
+        More info{" "}
+        <a
+          target="_blank"
+          href="https://github.com/arseneoaa/cryptoExchangeDashboard"
+        >
+          here.
+        </a>{" "}
+      </span>
     </div>
   );
 }
